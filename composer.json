@@ -1,0 +1,22 @@
+{
+    "name": "rafael/php-simple-fly",
+    "description": "package router most simple most scalable",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "SimpleFly\\": "app/"
+        },
+        "files": [
+            "bootstrap/functions.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "rafael",
+            "email": "rafael_sousa2018@outlook.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
