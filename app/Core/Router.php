@@ -1,6 +1,8 @@
 <?php
 
-namespace SimpleFly;
+namespace SimpleFly\Core;
+
+use SimpleFly\Enums\RouteMethod;
 
 class Router
 {
@@ -8,7 +10,14 @@ class Router
 
     private static function addRoute($method, $uri, $handler, $name = '')
     {
-        self::$routes[] = new Route($method, $uri, $handler, $name);
+        $route = new Route($method, $uri, $handler, $name);
+        self::$routes['obj'][] = $route;
+        self::$routes['assoc'][] = $route->assocArray();
+    }
+
+    public static function getRoutes()
+    {
+        return self::$routes;
     }
 
     public static function get($uri, $handler, $name = '')

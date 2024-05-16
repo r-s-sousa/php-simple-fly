@@ -1,4 +1,4 @@
-POST http://localhost:8000/users/404/notfound
+GET http://localhost:8000/closure
 Accept: application/json
 Content-Type: application/json
 
