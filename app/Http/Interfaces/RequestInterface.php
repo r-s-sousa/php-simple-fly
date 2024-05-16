@@ -2,6 +2,8 @@
 
 namespace SimpleFly\Http\Interfaces;
 
-interface RequestInterface
+use Psr\Http\Message\RequestInterface as PsrRequest;
+
+interface RequestInterface extends PsrRequest
 {
 }

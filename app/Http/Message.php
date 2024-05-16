@@ -3,34 +3,10 @@
 namespace SimpleFly\Http;
 
 use SimpleFly\Http\Interfaces\StreamInterface;
-use SimpleFly\Http\Interfaces\RequestInterface;
+use SimpleFly\Http\Interfaces\MessageInterface;
 
-class Request implements RequestInterface
+class Message implements MessageInterface
 {
-    public function getMethod(): string
-    {
-    }
-
-    public function getRequestTarget(): string
-    {
-    }
-
-    public function getUri(): UriInterface
-    {
-    }
-
-    public function withMethod(string $method): RequestInterface
-    {
-    }
-
-    public function withRequestTarget(string $requestTarget): RequestInterface
-    {
-    }
-
-    public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
-    {
-    }
-
     public function getBody(): StreamInterface
     {
     }
@@ -59,7 +35,7 @@ class Request implements RequestInterface
     {
     }
 
-    public function withBody(StreamInterface $body): MessageInterface
+    public function withBody(\Psr\Http\Message\StreamInterface $body): MessageInterface
     {
     }
 
