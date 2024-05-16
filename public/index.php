@@ -10,9 +10,9 @@ $closure = function ($request, $response) {
     return ['type' => 'closure', 'request' => $request, 'response' => $response];
 };
 
-Router::get('/', $closure, 'get.home');
-Router::get('/closure', $closure, 'delete.home');
-Router::get('/invokable', InvokableController::class, 'delete.home');
-Router::get('/controller', [WelcomeController::class, 'index'], 'delete.home');
+Router::get('/', $closure);
+Router::get('/closure', $closure, 'home.closure');
+Router::get('/invokable', InvokableController::class, 'home.invokable');
+Router::get('/controller', [WelcomeController::class, 'index'], 'home.controller');
 
 run();

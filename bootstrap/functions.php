@@ -22,9 +22,9 @@ function route($name)
 {
 }
 
-function listRoutes()
+function listRoutesGroupByUri()
 {
-    $routes = Router::getRoutes()['assoc'];
+    $routes = routes();
     $lineRoutes = [];
 
     foreach ($routes as $route) {
@@ -165,9 +165,75 @@ function routes()
     return Router::getRoutes()['assoc'];
 }
 
+function checkRoutesIntegrity()
+{
+    $routes = routes();
+    verifyIfHasDuplicatedRouteInRoutes($routes);
+    verifyIfHandlerFileAndMethodExists($routes);
+    verifyIfHasDuplicatedNameInRoutes($routes);
+}
+
+function verifyIfHasDuplicatedRouteInRoutes(array $routes)
+{
+    $routeList = listRoutesGroupByUri();
+
+    foreach ($routeList as $uri => $methods) {
+        $methodCounts = array_count_values($methods);
+        foreach ($methodCounts as $method => $count) {
+            if ($count > 1) {
+                throw new RouterException("Route uri: {$uri} with duplicated method: {$method}");
+            }
+        }
+    }
+}
+
+function verifyIfHandlerFileAndMethodExists($routes)
+{
+    foreach ($routes as $route) {
+        $type = $route['handlerType'];
+        $handler = $route['handler'];
+
+        if ($type === HandlerType::CLOSURE) {
+            continue;
+        }
+        if ($type === HandlerType::CONTROLLER) {
+            [$controller, $method] = $handler;
+            $instance = new $controller();
+            if (!method_exists($instance, $method)) {
+                throw new RouterException("Method not found: {$controller}::{$method}");
+            }
+        } elseif ($type === HandlerType::INVOKABLE) {
+            $instance = new $handler();
+            $method = '__invoke';
+            if (!method_exists($instance, $method)) {
+                throw new RouterException("Method {$method} found in {$handler}");
+            }
+        }
+    }
+}
+
+function verifyIfHasDuplicatedNameInRoutes($routes)
+{
+    $names = [];
+
+    foreach ($routes as $route) {
+        if (empty($route['name'])) {
+            continue;
+        }
+        if (in_array($route['name'], $names)) {
+            throw new RouterException("Route name must be unique: {$route['name']} already exists");
+        }
+
+        $names[] = $route['name'];
+    }
+
+    return false;
+}
+
 function run()
 {
     try {
+        checkRoutesIntegrity();
         processRequest();
     } catch (RouterException $e) {
         http_response_code($e->getCode());
