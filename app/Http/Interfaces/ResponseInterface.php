@@ -2,8 +2,11 @@
 
 namespace SimpleFly\Http\Interfaces;
 
-use Psr\Http\Message\ResponseInterface as PsrResponse;
-
-interface ResponseInterface extends PsrResponse
+interface ResponseInterface extends MessageInterface
 {
+    public function getStatusCode(): int;
+
+    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface;
+
+    public function getReasonPhrase(): string;
 }

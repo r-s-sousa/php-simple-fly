@@ -3,70 +3,87 @@
 namespace SimpleFly\Http;
 
 use SimpleFly\Http\Interfaces\UriInterface;
+use SimpleFly\Exceptions\NotImplementedException;
 
 class Uri implements UriInterface
 {
-    public function getAuthority(): string
-    {
-    }
-
-    public function getFragment(): string
-    {
-    }
-
-    public function getHost(): string
-    {
-    }
-
-    public function getPath(): string
-    {
-    }
-
-    public function getPort(): int|null
-    {
-    }
-
-    public function getQuery(): string
-    {
-    }
-
     public function getScheme(): string
     {
+        throw new NotImplementedException(__METHOD__);
+    }
+
+    public function getAuthority(): string
+    {
+        throw new NotImplementedException(__METHOD__);
     }
 
     public function getUserInfo(): string
     {
+        throw new NotImplementedException(__METHOD__);
     }
 
-    public function withFragment(string $fragment): UriInterface
+    public function getHost(): string
     {
+        throw new NotImplementedException(__METHOD__);
     }
 
-    public function withHost(string $host): UriInterface
+    public function getPort(): ?int
     {
+        throw new NotImplementedException(__METHOD__);
     }
 
-    public function withPath(string $path): UriInterface
+    public function getPath(): string
     {
+        throw new NotImplementedException(__METHOD__);
     }
 
-    public function withPort(int|null $port): UriInterface
+    public function getQuery(): string
     {
+        throw new NotImplementedException(__METHOD__);
     }
 
-    public function withQuery(string $query): UriInterface
+    public function getFragment(): string
     {
+        throw new NotImplementedException(__METHOD__);
     }
 
     public function withScheme(string $scheme): UriInterface
     {
+        throw new NotImplementedException(__METHOD__);
     }
 
-    public function withUserInfo(string $user, string|null $password = null): UriInterface
+    public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
+        throw new NotImplementedException(__METHOD__);
+    }
+
+    public function withHost(string $host): UriInterface
+    {
+        throw new NotImplementedException(__METHOD__);
+    }
+
+    public function withPort(?int $port): UriInterface
+    {
+        throw new NotImplementedException(__METHOD__);
+    }
+
+    public function withPath(string $path): UriInterface
+    {
+        throw new NotImplementedException(__METHOD__);
+    }
+
+    public function withQuery(string $query): UriInterface
+    {
+        throw new NotImplementedException(__METHOD__);
+    }
+
+    public function withFragment(string $fragment): UriInterface
+    {
+        throw new NotImplementedException(__METHOD__);
     }
 
     public function __toString(): string
     {
+        throw new NotImplementedException(__METHOD__);
     }
 }

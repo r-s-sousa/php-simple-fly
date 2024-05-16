@@ -12,6 +12,7 @@ enum HttpResponseCode: int
     case NOT_AUTHORIZED = 401;
     case NOT_FOUND = 404;
     case NOT_PROCESSED = 422;
+    case NOT_IMPLEMENTED = 500;
 
     public static function fromInt(int $code): self
     {
@@ -22,6 +23,7 @@ enum HttpResponseCode: int
             self::NOT_AUTHORIZED->value => self::NOT_AUTHORIZED,
             self::NOT_FOUND->value => self::NOT_FOUND,
             self::NOT_PROCESSED->value => self::NOT_PROCESSED,
+            self::NOT_IMPLEMENTED->value => self::NOT_IMPLEMENTED,
             default => throw new RouterException("Invalid HTTP response code: {$code}"),
         };
     }
