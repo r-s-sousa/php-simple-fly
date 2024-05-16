@@ -6,23 +6,39 @@ use SimpleFly\Enums\HttpResponseCode;
 use SimpleFly\Enums\RouteMethod;
 use SimpleFly\Exceptions\RouterException;
 
-function ddJson(...$args)
+function ddJson(...$args): void
 {
     $json = json_encode(...$args);
     header('Content-Type: application/json');
     die($json);
 }
 
-function dd(...$args)
+function dd(...$args): void
 {
     die(var_dump(...$args));
 }
 
-function route($name)
+/** @throws RouterException */
+function route(string $name): array
 {
+    $routes = routes();
+
+    foreach ($routes as $route) {
+        if (empty($route['name'])) {
+            continue;
+        }
+        if ($route['name'] === $name) {
+            return $route;
+        }
+    }
+
+    throw new RouterException(
+        "Route find by name not found with name: {$name}",
+        HttpResponseCode::NOT_FOUND->value
+    );
 }
 
-function listRoutesGroupByUri()
+function listRoutesGroupByUri(): array
 {
     $routes = routes();
     $lineRoutes = [];
@@ -34,7 +50,7 @@ function listRoutesGroupByUri()
     return $lineRoutes;
 }
 
-function routeAllowedMethods($matches)
+function routeAllowedMethods(array $matches): array
 {
     $allowedMethods = [];
 
@@ -45,7 +61,8 @@ function routeAllowedMethods($matches)
     return $allowedMethods;
 }
 
-function searchRoute($method, $uri, $routes)
+/** @throws RouterException */
+function searchRoute(string $method, string $uri, array $routes): array
 {
     define('MAX_MATCH_COUNT', 1);
     define('METHOD_NOT_ALLOWED_COUNT', 0);
@@ -83,22 +100,22 @@ function searchRoute($method, $uri, $routes)
     return array_shift($matches);
 }
 
-function query()
+function query(): array
 {
     return $_GET;
 }
 
-function queryParam($param)
+function queryParam(string $param): array
 {
     return query()[$param];
 }
 
-function uri()
+function uri(): string
 {
     return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 }
 
-function uriMatch($uri, $routes)
+function uriMatch(string $uri, array $routes): array
 {
     $matches = [];
 
@@ -128,12 +145,13 @@ function uriMatch($uri, $routes)
     return $matches;
 }
 
-function body()
+/** @throws RouterException */
+function body(): array
 {
     $bodyContent = file_get_contents('php://input');
 
     if (empty($bodyContent)) {
-        return null;
+        return [];
     }
 
     $decodedBody = json_decode($bodyContent, true);
@@ -145,50 +163,54 @@ function body()
     return $decodedBody;
 }
 
-function bodyParam($param)
+function bodyParam(string $param): string|array
 {
     return body()[$param];
 }
 
-function method()
+function method(): string
 {
     return $_SERVER['REQUEST_METHOD'];
 }
 
-function headers()
+function headers(): array
 {
     return getallheaders();
 }
 
-function routes()
+function routes(): array
 {
     return Router::getRoutes()['assoc'];
 }
 
-function checkRoutesIntegrity()
+/** @throws RouterException|Exception */
+function checkRoutesIntegrity(): void
 {
-    $routes = routes();
-    verifyIfHasDuplicatedRouteInRoutes($routes);
-    verifyIfHandlerFileAndMethodExists($routes);
-    verifyIfHasDuplicatedNameInRoutes($routes);
+    verifyIfHasDuplicatedRouteInRoutes();
+    verifyIfHandlerFileAndMethodExists();
+    verifyIfHasDuplicatedNameInRoutes();
 }
 
-function verifyIfHasDuplicatedRouteInRoutes(array $routes)
+/** @throws RouterException */
+function verifyIfHasDuplicatedRouteInRoutes(): void
 {
     $routeList = listRoutesGroupByUri();
 
     foreach ($routeList as $uri => $methods) {
-        $methodCounts = array_count_values($methods);
-        foreach ($methodCounts as $method => $count) {
+        $methodsWithCount = array_count_values($methods);
+        foreach ($methodsWithCount as $method => $count) {
             if ($count > 1) {
-                throw new RouterException("Route uri: {$uri} with duplicated method: {$method}");
+                throw new RouterException("Route uri: {$uri} has duplicated method: {$method}");
             }
         }
     }
 }
 
-function verifyIfHandlerFileAndMethodExists($routes)
+/** @throws RouterException|Exception */
+function verifyIfHandlerFileAndMethodExists(): void
 {
+    $routes = routes();
+
     foreach ($routes as $route) {
         $type = $route['handlerType'];
         $handler = $route['handler'];
@@ -212,8 +234,10 @@ function verifyIfHandlerFileAndMethodExists($routes)
     }
 }
 
-function verifyIfHasDuplicatedNameInRoutes($routes)
+/** @throws RouterException */
+function verifyIfHasDuplicatedNameInRoutes(): void
 {
+    $routes = routes();
     $names = [];
 
     foreach ($routes as $route) {
@@ -226,11 +250,9 @@ function verifyIfHasDuplicatedNameInRoutes($routes)
 
         $names[] = $route['name'];
     }
-
-    return false;
 }
 
-function run()
+function run(): void
 {
     try {
         checkRoutesIntegrity();
@@ -248,7 +270,7 @@ function run()
     }
 }
 
-function processRequest()
+function processRequest(): void
 {
     // identifiers
     $headers = headers();
@@ -270,6 +292,9 @@ function processRequest()
     $handler = $route['handler'];
     $handlerType = $route['handlerType'];
 
+    // make the parameters to be passed
+    // ...
+
     // call function
     $result = runHandler($handler, $handlerType);
 
@@ -278,8 +303,7 @@ function processRequest()
 
 function runHandler($handler, $handlerType)
 {
-    $request = 'req';
-    $response = 'res';
+    [$request, $response] = ['req', 'res'];
 
     switch ($handlerType) {
         case HandlerType::CLOSURE:

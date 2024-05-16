@@ -1,4 +1,4 @@
-GET http://localhost:8000/closure
+GET http://localhost:8000/
 Accept: application/json
 Content-Type: application/json
 
@@ -6,15 +6,3 @@ Content-Type: application/json
   "bodyKey1": "bodyKey1",
   "bodyKey2": "bodyKey2"
 }
-
-# users
-# users/rafael
-# users/rafael/edit
-# users/rafael/show
-# users/bulk/insert
-# users/fullname/rafael/sousa
-# users/404/notfound
-
-
-### [get, post, put, patch, delete]
-# POST http://localhost:8000/users/rafael?key1=value1&key2=value2
